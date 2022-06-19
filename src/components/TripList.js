@@ -1,30 +1,20 @@
-import { useState, useEffect, useCallback } from 'react'; //creates a cached version of an function
+import { useState } from 'react'; 
 import './TripList.css';
+//HOOKS
+import { useFetch } from '../hooks/useFetch'; 
 
 const TripList = () => {
     //STATE & VARIABLES
-    const [trips, setTrips] = useState([]); //useState negates the reference type varaibles problem we have
     const [url, setUrl] = useState('http://localhost:3000/trips');
+    const { data: trips, isPending } = useFetch(url); 
 
-    console.log(trips);
     
-    //FUNCTIONS
-    const fetchTrips = useCallback(async () => {
-        const response = await fetch(url)
-        const json = await response.json();
-        setTrips(json);
-    }, [url]);
-
-    useEffect(() => {
-        fetchTrips()
-    }, [url, fetchTrips]);
-
-
     return(
         <div className='trip-list'>
             <h2>Trip List</h2>
+            {isPending && <div>Loading Trips...</div>}
             <ul>
-                {trips.map(trip => (
+                {trips && trips.map(trip => (
                     <li key={trip.id}>
                         <h3>{trip.title}</h3>
                         <p>{trip.price}</p>
